@@ -59,6 +59,10 @@ NeoBundle 'tpope/vim-rails'
 NeoBundle 'Shougo/unite.vim'
 NeoBundle 'Shougo/neomru.vim'
 NeoBundle 'bling/vim-airline'
+NeoBundle 'othree/html5.vim'
+NeoBundle 'hail2u/vim-css3-syntax'
+NeoBundle 'pangloss/vim-javascript'
+NeoBundle 'mattn/emmet-vim'
 
 
 "" Required:
@@ -190,3 +194,8 @@ au FileType unite inoremap <silent> <buffer> <ESC><ESC> <ESC>:q<CR>
  if has("gui_running")
  colorscheme blue
  endif
+
+ "emmet
+ let g:user_emmet_install_global = 0
+autocmd FileType html,css EmmetInstall
+  let g:user_emmet_settings = { 'lang' : 'ja' }
