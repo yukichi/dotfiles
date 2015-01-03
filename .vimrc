@@ -10,7 +10,7 @@ set hlsearch
 set nowrap
 set showmatch
 set whichwrap=h,l
-set nowrapscan
+set wrapscan
 set ignorecase
 set smartcase
 set hidden
@@ -40,7 +40,7 @@ endfunction
 "---------------------------
 " bundleで管理するディレクトリを指定
 if has('vim_starting')
-set runtimepath+=~/.vim/bundle/neobundle.vim.git/
+set runtimepath+=~/.vim/bundle/neobundle.vim/
 call neobundle#begin(expand('~/.vim/bundle/'))
 NeoBundleFetch 'Shougo/neobundle.vim'
 call neobundle#end()
@@ -51,7 +51,12 @@ endif
 "call neobundle#end()
 
 NeoBundle 'tyru/open-browser.vim'
+NeoBundle 'Shougo/neobundle.vim.git'
+NeoBundle 'Shougo/vimfiler'
+NeoBundle 'ujihisa/unite-colorscheme'
 NeoBundle 'kannokanno/previm'
+NeoBundle 'parkr/vim-jekyll'
+NeoBundle 'elzr/vim-json'
 let g:vim_markdown_folding_disabled=1
 NeoBundle 'tpope/vim-fugitive'
 NeoBundle 'gregsexton/gitv'
@@ -63,6 +68,8 @@ NeoBundle 'othree/html5.vim'
 NeoBundle 'hail2u/vim-css3-syntax'
 NeoBundle 'pangloss/vim-javascript'
 NeoBundle 'mattn/emmet-vim'
+NeoBundle 'scrooloose/syntastic'
+NeoBundle 'mattn/jscomplete-vim'
 
 
 "" Required:
@@ -196,6 +203,35 @@ au FileType unite inoremap <silent> <buffer> <ESC><ESC> <ESC>:q<CR>
  endif
 
  "emmet
- let g:user_emmet_install_global = 0
+"autocmd FileType html imap <buffer><expr><tab>
+"    \ emmet#isExpandable() ? "\<plug>(emmet-expand-abbr)" :
+"        \ "\<tab>"
+let g:use_emmet_complete_tag = 1
+let g:user_emmet_settings = {
+            \    'lang' : 'ja',
+                        \    'indentation' : '  ',
+                                    \}
 autocmd FileType html,css EmmetInstall
-  let g:user_emmet_settings = { 'lang' : 'ja' }
+
+autocmd FileType javascript
+  \ :setl omnifunc=jscomplete#CompleteJS
+
+let g:syntastic_mode_map = { 'mode': 'passive',
+      \ 'active_filetypes': ['html', 'ruby', 'javascript'],
+      \ 'passive_filetypes': [] }
+
+" vimfiler and quicl look
+let g:vimfiler_quick_look_command = 'qlmanage -p'
+autocmd FileType vimfiler nmap <buffer> V <Plug>(vimfiler_quick_look)
+
+NeoBundle 'Shougo/vimproc.vim', {
+\ 'build' : {
+\     'windows' : 'tools\\update-dll-mingw',
+\     'cygwin' : 'make -f make_cygwin.mak',
+\     'mac' : 'make -f make_mac.mak',
+\     'linux' : 'make',
+\     'unix' : 'gmake',
+\    },
+\ }
+
+

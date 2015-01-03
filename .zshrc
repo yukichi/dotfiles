@@ -86,21 +86,20 @@ export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
+alias vim=/Applications/MacVim.app/Contents/MacOS/vim
 
 export DOCKER_HOST=tcp://192.168.59.103:2376
 export DOCKER_CERT_PATH=/Users/yukichi/.boot2docker/certs/boot2docker-vm
 export DOCKER_TLS_VERIFY=1
 export EDITOR=vim
 export HOMEBREW_GITHUB_API_TOKEN=f2e358ddb95dc041a4b39a390c85f78a0ebfcb1f
-export PATH="$HOME/.phpenv/bin:$PATH"
-eval "$(phpenv init -)"
 eval "$(rbenv init -)"
 
 export GOPATH=$HOME/go
 export GOROOT=/usr/local/opt/go/libexec
 export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
 
-export GIT=~/work/git
+# export GIT=~/work/git
 
 export PHABRICATOR_ENV=custom/custom
 export PERL5LIB=/Users/yukichi/perl5/lib/perl5:$GIT/perl:$GIT/contrib/mw-to-git
