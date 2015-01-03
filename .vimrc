@@ -1,6 +1,5 @@
 syntax enable
 
-set paste
 set number
 set ruler
 set list
@@ -24,11 +23,36 @@ set guifont=Ricty_Diminished_Regular:h18
 
 colorscheme hybrid
 
+" GUI options
+ if has("gui_running")
+ colorscheme blue
+ endif
+
 
 nnoremap ;  :
 nnoremap :  ;
 vnoremap ;  :
 vnoremap :  ;
+
+" 挿入モードでのカーソル移動
+inoremap <C-j> <Down>
+inoremap <C-k> <Up>
+inoremap <C-h> <Left>
+inoremap <C-l> <Right>
+" カーソル前の削除
+"inoremap <silent> <C-h> <C-g>u<C-h>
+" カーソル後の文字削除
+inoremap <silent> <C-d> <Del>
+" カーソルから行末まで削除
+inoremap <silent> <C-d>0 <Esc>lc$
+" カーソルから行頭までヤンク
+inoremap <silent> <C-y>e <Esc>ly0<Insert>
+" カーソルから行末までヤンク
+inoremap <silent> <C-y>0 <Esc>ly$<Insert>
+" カーソルの下の行に空白
+inoremap <silent> <C-o> <Esc>o<Insert>
+" カーソルの上の行に空白
+inoremap <silent> <C-S-O> <Esc>O<Insert>
 
 function! s:search_forward_p()
   return exists('v:searchforward') ? v:searchforward : 1
@@ -51,6 +75,7 @@ endif
 "call neobundle#end()
 
 NeoBundle 'tyru/open-browser.vim'
+NeoBundle 'thinca/vim-quickrun'
 NeoBundle 'Shougo/neobundle.vim.git'
 NeoBundle 'Shougo/vimfiler'
 NeoBundle 'ujihisa/unite-colorscheme'
@@ -71,6 +96,17 @@ NeoBundle 'mattn/emmet-vim'
 NeoBundle 'scrooloose/syntastic'
 NeoBundle 'mattn/jscomplete-vim'
 
+NeoBundle 'Shougo/vimproc.vim', {
+\ 'build' : {
+\     'windows' : 'tools\\update-dll-mingw',
+\     'cygwin' : 'make -f make_cygwin.mak',
+\     'mac' : 'make -f make_mac.mak',
+\     'linux' : 'make',
+\     'unix' : 'gmake',
+\    },
+\ }
+
+
 
 "" Required:
 filetype plugin indent on
@@ -81,60 +117,9 @@ NeoBundleCheck
 "" End Neobundle Settings.
 ""-------------------------
 "
-"NeoBundle ‘plasticboy/vim-markdown'
-"NeoBundle ‘kannokanno/previm'
-"NeoBundle ‘tyru/open-browser.vim'
-"
 au BufRead,BufNewFile *.md set filetype=markdown
 
 
-" Vundle setting
-"set nocompatible              " be iMproved, required
-"filetype off                  " required
-"
-"" set the runtime path to include Vundle and initialize
-"set rtp+=~/.vim/bundle/Vundle.vim
-"call vundle#begin()
-" alternatively, pass a path where Vundle should install plugins
-"call vundle#begin('~/some/path/here')
-
-" let Vundle manage Vundle, required
-"Plugin 'gmarik/Vundle.vim'
-
-" The following are examples of different formats supported.
-" Keep Plugin commands between vundle#begin/end.
-" plugin on GitHub repo
-"Plugin 'tpope/vim-fugitive'
-" plugin from http://vim-scripts.org/vim/scripts.html
-"Plugin 'L9'
-" Git plugin not hosted on GitHub
-"Plugin 'git://git.wincent.com/command-t.git'
-" git repos on your local machine (i.e. when working on your own plugin)
-"Plugin 'file:///home/gmarik/path/to/plugin'
-" The sparkup vim script is in a subdirectory of this repo called vim.
-" Pass the path to set the runtimepath properly.
-"Plugin 'rstacruz/sparkup', {'rtp': 'vim/'}
-" Avoid a name conflict with L9
-"Plugin 'user/L9', {'name': 'newL9'}
-
-" markdown plugins
-"Plugin 'godlygeek/tabular'
-"Plugin 'plasticboy/vim-markdown'
-
-" All of your Plugins must be added before the following line
-"call vundle#end()            " required
-"filetype plugin indent on    " required
-" To ignore plugin indent changes, instead use:
-"filetype plugin on
-"
-" Brief help
-" :PluginList       - lists configured plugins
-" :PluginInstall    - installs plugins; append `!` to update or just :PluginUpdate
-" :PluginSearch foo - searches for foo; append `!` to refresh local cache
-" :PluginClean      - confirms removal of unused plugins; append `!` to auto-approve removal
-"
-" see :h vundle for more details or wiki for FAQ
-" Put your non-Plugin stuff after this line
 " File Explore tree view
 let g:netrw_liststyle = 3
 
@@ -185,6 +170,7 @@ au FileType unite inoremap <silent> <buffer> <ESC><ESC> <ESC>:q<CR>
   let g:airline_enable_fugitive=1
   set laststatus =2 
 
+" Goに関する設定
   " :Fmt などで gofmt の代わりに goimports を使う
   let g:gofmt_command = 'goimports'
 
@@ -196,11 +182,6 @@ au FileType unite inoremap <silent> <buffer> <ESC><ESC> <ESC>:q<CR>
   au BufWritePre *.go Fmt
   au BufNewFile,BufRead *.go set sw=4 noexpandtab ts=4 filetype=go
   au FileType go compiler go
-
-" GUI options
- if has("gui_running")
- colorscheme blue
- endif
 
  "emmet
 "autocmd FileType html imap <buffer><expr><tab>
@@ -224,14 +205,18 @@ let g:syntastic_mode_map = { 'mode': 'passive',
 let g:vimfiler_quick_look_command = 'qlmanage -p'
 autocmd FileType vimfiler nmap <buffer> V <Plug>(vimfiler_quick_look)
 
-NeoBundle 'Shougo/vimproc.vim', {
-\ 'build' : {
-\     'windows' : 'tools\\update-dll-mingw',
-\     'cygwin' : 'make -f make_cygwin.mak',
-\     'mac' : 'make -f make_mac.mak',
-\     'linux' : 'make',
-\     'unix' : 'gmake',
-\    },
-\ }
+if &term =~ "xterm"
+  let &t_ti .= "\e[?2004h"
+  let &t_te .= "\e[?2004l"
+  let &pastetoggle = "\e[201~"
 
+  function XTermPasteBegin(ret)
+    set paste
+    return a:ret
+  endfunction
 
+  noremap <special> <expr> <Esc>[200~ XTermPasteBegin("0i")
+  inoremap <special> <expr> <Esc>[200~ XTermPasteBegin("")
+  cnoremap <special> <Esc>[200~ <nop>
+  cnoremap <special> <Esc>[201~ <nop>
+endif
